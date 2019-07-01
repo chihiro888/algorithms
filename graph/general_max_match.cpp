@@ -3,6 +3,8 @@
 
 // tested
 // http://acm.timus.ru/problem.aspx?space=1&num=1099
+// https://www.acmicpc.net/problem/15737
+// https://www.acmicpc.net/problem/13447
 
 #include <cstdio>
 #include <tuple>
@@ -64,6 +66,13 @@ struct DisjointSet {
 	}
 };
 
+// sample usage
+// MaxMatching matcher(n);
+// for (auto edge : edges) matcher.AddEdge(edge.start, edge.end);
+// int max_match = matcher.Match();
+// for (int i = 0; i < n; i++) {
+//	 if (matched[i] > i) reportMatch(i, matched[i]);
+// }
 struct MaxMatching {
 	int n;
 	vector<vector<int>> gnext;
@@ -84,6 +93,7 @@ struct MaxMatching {
 	}
 
 	// to find actual match, use matched array. if (u,v) is a match, matched[u] = v and matched[v] = u
+	// Returns the number of matched edges.
 	int Match() {
 		int ans = 0;
 		for (int i = 0; i < n; i++) {
