@@ -12,13 +12,14 @@ long long ccw(point a, point b, point c) {
 }
 
 vector<point> convexHull(vector<point> dat) {
-	if (dat.size() <= 3)
-		return dat;
 	vector<point> upper, lower;
 	sort(dat.begin(), dat.end());
-	for(int i = 0; i < dat.size(); i++) {
-		while(upper.size() >= 2 && ccw(*++upper.rbegin(),*upper.rbegin(),dat[i]) >= 0) upper.pop_back();
-		while(lower.size() >= 2 && ccw(*++lower.rbegin(),*lower.rbegin(),dat[i]) <= 0) lower.pop_back();
+	dat.erase(unique(dat.begin(), dat.end()), dat.end());
+	if (dat.size() <= 2)
+		return dat;
+	for (int i = 0; i < dat.size(); i++) {
+		while (upper.size() >= 2 && ccw(*++upper.rbegin(), *upper.rbegin(), dat[i]) >= 0) upper.pop_back();
+		while (lower.size() >= 2 && ccw(*++lower.rbegin(), *lower.rbegin(), dat[i]) <= 0) lower.pop_back();
 		upper.emplace_back(dat[i]);
 		lower.emplace_back(dat[i]);
 	}
