@@ -20,6 +20,65 @@
 
 using namespace std;
 
+namespace offline_trick {
+
+// tuple<slope, base, auxiliary>: f(x) = slope * x + base
+template<typename TAux>
+void calc_upper_convex(vector<tuple<long long, long long, TAux>> *lines) {
+  if (lines->empty()) return;
+  vector<tuple<long long, long long, TAux>> stck;
+  sort(lines->begin(), lines->end());
+  for (auto &sbi : *lines) {
+    long long s = get<0>(sbi), b = get<1>(sbi);
+    while (stck.size() >= 2) {
+      if (get<0>(stck.back()) == s) {
+        stck.pop_back();
+        continue;
+      }
+      long long s0 = get<0>(stck[stck.size() - 2]), b0 = get<1>(stck[stck.size() - 2]);
+      long long s1 = get<0>(stck[stck.size() - 1]), b1 = get<1>(stck[stck.size() - 1]);
+      if ((b - b0) * (s1 - s0) >= (b1 - b0) * (s - s0)) {
+        stck.pop_back();
+        continue;
+      }
+      break;
+    }
+    stck.emplace_back(move(sbi));
+  }
+  lines->swap(stck);
+}
+
+template<typename TAux>
+pair<long long, TAux> evaluate(tuple<long long, long long, TAux> line, long long x) {
+  return make_pair(get<0>(line)*x + get<1>(line), move(get<2>(line)));
+}
+// tuple<slope, base, auxiliary>: f(x) = slope * x + base
+template<typename TAux>
+pair<long long, TAux> query_upper_convex(const vector<tuple<long long, long long, TAux>> &lines, long long x) {
+  int l = 1, r = static_cast<int>(lines.size()) - 1;
+  pair<long long, TAux> best = evaluate(lines[0], x);
+  while (l <= r) {
+    int m = (l + r) / 2;
+    pair<long long, TAux> em = evaluate(lines[m], x);
+    if (m == r) {
+      best = max(best, em);
+      r = m - 1;
+      continue;
+    }
+    pair<long long, TAux> em2 = evaluate(lines[m + 1], x);
+    if (em.first < em2.first) {
+      best = max(best, em2);
+      l = m + 1;
+    } else {
+      best = max(best, em);
+      r = m - 1;
+    }
+  }
+  return best;
+}
+
+}  // offline_trick
+
 struct UpperHull {
     typedef long long coord_t;
     struct Line {
