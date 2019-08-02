@@ -71,8 +71,8 @@ struct TreePath {
       }
     }
   }
-  // return (number of edges, cost sum)
-  pair<int, cost_t> GetPathLengthAndCost(int a, int b) const {
+  // return (lca, number of edges, cost sum)
+  tuple<int, int, cost_t> GetPathLengthAndCost(int a, int b) const {
     cost_t sum = 0;
     int cnt = 0;
     if (depth[a] < depth[b]) swap(a, b);
@@ -83,7 +83,7 @@ struct TreePath {
         cnt += (1 << j);
       }
     }
-    if (a == b) return make_pair(cnt, sum);
+    if (a == b) return make_tuple(a, cnt, sum);
     for (int j = jumplen - 1; j >= 0; j--) {
       if (jump[j][a].first == jump[j][b].first) continue;
       sum += jump[j][a].second;
@@ -95,7 +95,7 @@ struct TreePath {
     sum += jump[0][a].second;
     sum += jump[0][b].second;
     cnt += 2;
-    return make_pair(cnt, sum);
+    return make_tuple(jump[0][a].first, cnt, sum);
   }
 };
 
