@@ -44,6 +44,7 @@ struct SplayTree {
   }
   void reserve(size_t n) { nodes.reserve(n); gc.reserve(n); }
 
+  int size() const { return (root == -1) ? 0 : nodes[root].cnt; }
   void rotateUp(int v) {
     int p = nodes[v].p;
     bool left = (nodes[p].l == v);
@@ -134,11 +135,10 @@ struct SplayTree {
     return newid;
   }
   int getRank(const int id) {
+    if (id == -1) return size();
     splay(id);
-    int rank = 0;
     int subl = nodes[id].l;
-    if (subl != -1) rank = nodes[subl].cnt;
-    return rank;
+    return (subl != -1) ? nodes[subl].cnt : 0;
   }
   int getKth(int k, bool do_splay = true) { // 0-indexed, returns index of the node in `nodes`
     if (k < 0 || root == -1 || k >= nodes[root].cnt) return -1;

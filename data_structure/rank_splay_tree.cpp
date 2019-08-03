@@ -224,11 +224,10 @@ struct RankSplayTree {
   }
   void removeKth(int k) { removeId(getKth(k, false)); }
   int getRank(const int id) {
+    if (id == -1) return size();
     splay(id);
-    int rank = 0;
     int subl = nodes[id].l;
-    if (subl != -1) rank = nodes[subl].cnt;
-    return rank;
+    return (subl != -1) ? nodes[subl].cnt : 0;
   }
   val_t& getValue(const int id) { return nodes[id].val; }
 };
