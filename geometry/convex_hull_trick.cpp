@@ -79,6 +79,53 @@ pair<long long, TAux> query_upper_convex(const vector<tuple<long long, long long
 
 }  // offline_trick
 
+// Computes upper hull.
+// slope must strictly increase.
+// Tested boj/17526
+struct StrictlyIncreasingSlopeTrick {
+  typedef long long coord_t;
+  typedef pair<coord_t, coord_t> Line;  // slope, offset
+  vector<Line> lines;
+  long long ccw(Line a, Line b, Line c) const {
+    // TODO: replace with division if overflow can happen
+    auto val = (b.second - a.second) * (c.first - a.first)
+      - (c.second - a.second) * (b.first - a.first);
+    return (val > 0) - (val < 0);
+  }
+  void Add(coord_t slope, coord_t offset) {
+    // assumes slope is strictly greater than previous slope.
+    while (lines.size() >= 2 &&
+      ccw(lines[lines.size()-2], lines.back(), make_pair(slope, offset)) < 0)
+      lines.pop_back();
+    lines.emplace_back(slope, offset);
+  }
+  coord_t Eval(coord_t x) {
+    int s = 0, e = lines.size() - 1;
+    coord_t ans = lines[0].first*x + lines[0].second;
+    while (s <= e) {
+      int m1 = (s + s + e) / 3;
+      int m2 = (m1 + 1 + e) / 2;
+      auto r1 = lines[m1].first*x + lines[m1].second;
+      ans = max(ans, r1);
+      if (m1 == e) {
+        e = m1 - 1;
+        continue;
+      }
+      auto r2 = lines[m2].first*x + lines[m2].second;
+      ans = max(ans, r2);
+      if (r1 <= r2) {
+        s = m1 + 1;
+        continue;
+      } else {
+        e = m2 - 1;
+      }
+    }
+    return ans;
+  }
+};
+
+// Computes upper hull.
+// Tested boj/17526
 struct UpperHull {
     typedef long long coord_t;
     struct Line {
@@ -116,6 +163,7 @@ struct UpperHull {
         }
 
         // ceil division
+        // TODO: replace with flt division if x is not integral.
         coord_t cross_point(const Line &other) const {
             // b1 + m1 * x == b2 + m2 * x
             // (b1 - b2) / (m2 - m1) = x
