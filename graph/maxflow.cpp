@@ -215,7 +215,7 @@ struct ProjectSelection {
 
 	vector<profit_t> profits;
 
-	ProjectSelection(vector<profit_t> profits) : profits(move(profits)) {
+	ProjectSelection(vector<profit_t> profits_) : profits(move(profits_)) {
 		int n = (int)profits.size();
 		mf.init(n + 2);
 		source = n;
